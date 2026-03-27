@@ -1,0 +1,77 @@
+# .gitignore - Customizable Inventory Management System
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+
+# Backend - Python
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/env/
+backend/venv/
+backend/.env
+backend/.env.local
+backend/inventory.db
+backend/*.db
+backend/dist/
+backend/build/
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/dist/
+backend/*.egg-info/
+
+# Frontend - Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log
+frontend/yarn-debug.log
+frontend/yarn-error.log
+frontend/.pnp
+frontend/.pnp.js
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# OS
+Thumbs.db
+.DS_Store
+*.log
+logs/
+
+# Project-specific
+/data/
+/backups/
+/uploads/
+*.bak
+*.tmp
+
+# CI/CD
+.github/workflows/cache/
+
+# Architecture Decision Records (ADRs) - local drafts
+docs/adr/drafts/
+
+# Dependencies
+backend/requirements.lock
+frontend/pnpm-lock.yaml
+
+# Misc
+.env.production.local
+.env.staging.local
+*.pem
+*.key

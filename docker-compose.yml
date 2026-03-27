@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Frontend - Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: inventory-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+      - NEXT_PUBLIC_ENVIRONMENT=development
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: pnpm dev
+
+  # Backend - FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: inventory-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./inventory.db
+      - JWT_SECRET_KEY=dev-secret-key-change-in-production
+      - CORS_ORIGINS=http://localhost:3000
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    depends_on:
+      - sqlite
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Database - SQLite (for reference, not typically containerized)
+  sqlite:
+    image: sqlite
+    container_name: inventory-sqlite
+    volumes:
+      - ./data:/data
+    # SQLite is file-based, this is just for demonstration
+    # In production, you might use PostgreSQL instead
+
+# Named volume for persistent data
+volumes:
+  data:
+    driver: local
+
+# Network for communication between services
+networks:
+  default:
+    name: inventory-network
