@@ -11,12 +11,19 @@
 
 # Backend - Python
 backend/__pycache__/
+backend/**/__pycache__/
 backend/*.pyc
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.pyd
+*.py[cod]
+*$py.class
 backend/*.pyo
 backend/*.pyd
 backend/.Python
 backend/env/
 backend/venv/
+.venv/
 backend/.env
 backend/.env.local
 backend/inventory.db

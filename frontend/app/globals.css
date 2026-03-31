@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface: #f5f8ff;
+  --panel: #ffffff;
+  --ink: #102235;
+  --accent: #d94f04;
+  --muted: #5c7186;
+  --font-body: var(--font-manrope);
+  --font-mono: var(--font-plex-mono);
+}
+
+[data-theme="dark"] {
+  --surface: #09111a;
+  --panel: #142131;
+  --ink: #e5eef8;
+  --accent: #ff8c42;
+  --muted: #9fb4cb;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(217, 79, 4, 0.16), transparent 34%),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(27, 124, 255, 0.18),
+      transparent 28%
+    ),
+    var(--surface);
+  font-family: var(--font-body), "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mono {
+  font-family: var(--font-mono), "Consolas", "Courier New", monospace;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 420ms ease-out both;
+}
