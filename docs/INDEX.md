@@ -5,23 +5,23 @@
 ### Getting Started
 
 1. **[README.md](../README.md)** - Overview, quick start, features
-2. **[EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md)** - Project overview for leads
-3. **[AGILE.md](../AGILE.md)** - Sprint planning & team workflow
+2. **[EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)** - Project overview for leads
+3. **[AGILE.md](./AGILE.md)** - Sprint planning & team workflow
 
 ### Architecture & Design
 
-4. **[architecture.md](../architecture.md)** - System architecture, data flow
-5. **[system_design.md](../system_design.md)** - Database schema, API specs, UI design
-6. **[tech_stack.md](../tech_stack.md)** - Technology choices & rationale
+4. **[architecture.md](./architecture.md)** - System architecture, data flow
+5. **[system_design.md](./system_design.md)** - Database schema, API specs, UI design
+6. **[tech_stack.md](./tech_stack.md)** - Technology choices & rationale
 
 ### Requirements & Specifications
 
-7. **[SRS.md](../SRS.md)** - Complete requirements specification
-8. **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Development standards & code guidelines
+7. **[SRS.md](./SRS.md)** - Complete requirements specification
+8. **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards & code guidelines
 
 ### Operations & Deployment
 
-9. **[DEPLOYMENT.md](../DEPLOYMENT.md)** - Deploy to staging/production
+9. **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploy to staging/production
 10. **[INDEX.md](./INDEX.md)** - This file
 
 ---
@@ -32,67 +32,22 @@
 Customizable_Inventory_Management_System/
 │
 ├── 📄 README.md                    # Main project overview
-├── 📄 EXECUTIVE_SUMMARY.md         # Project summary for stakeholders
-├── 📄 SRS.md                       # Requirements specification
-├── 📄 AGILE.md                     # Sprint planning & methodology
-├── 📄 tech_stack.md                # Technology stack details
-├── 📄 architecture.md              # System architecture
-├── 📄 system_design.md             # Detailed design specs
-├── 📄 CONTRIBUTING.md              # Development guidelines
-├── 📄 DEPLOYMENT.md                # Deployment procedures
-├── 📄 documentation.md             # Original project documentation
-│
-├── 📁 frontend/                    # Next.js 14 application
-│   ├── app/                        # Pages & layouts
-│   ├── components/                 # React components
-│   ├── lib/                        # Utilities & hooks
-│   ├── store/                      # Zustand state
-│   ├── styles/                     # Styling
-│   ├── public/                     # Static assets
-│   ├── .env.example                # Environment template
-│   ├── Dockerfile                  # Container image
-│   ├── package.json                # Dependencies
-│   ├── next.config.js              # Next.js config
-│   ├── tailwind.config.ts          # Tailwind config
-│   └── tsconfig.json               # TypeScript config
-│
+├── 📄 start.bat                    # Local startup helper (Windows)
+├── 📁 docs/                        # Project documentation
+│   ├── INDEX.md
+│   ├── START_HERE.md
+│   ├── PROJECT_DELIVERY_SUMMARY.md
+│   ├── EXECUTIVE_SUMMARY.md
+│   ├── AGILE.md
+│   ├── SRS.md
+│   ├── architecture.md
+│   ├── system_design.md
+│   ├── tech_stack.md
+│   ├── CONTRIBUTING.md
+│   └── DEPLOYMENT.md
+├── 📁 frontend/                    # Next.js application
 ├── 📁 backend/                     # FastAPI application
-│   ├── app/
-│   │   ├── api/                    # API routes
-│   │   ├── database/               # Database models
-│   │   ├── services/               # Business logic
-│   │   ├── core/                   # Auth & security
-│   │   ├── schemas/                # Pydantic models
-│   │   ├── utils/                  # Utilities
-│   │   ├── main.py                 # App entry
-│   │   └── config.py               # Configuration
-│   ├── migrations/                 # Alembic migrations
-│   ├── tests/                      # Test suites
-│   ├── .env.example                # Environment template
-│   ├── Dockerfile                  # Container image
-│   ├── requirements.txt             # Dependencies
-│   ├── pytest.ini                  # Pytest config
-│   └── README.md                   # Backend guide
-│
-├── 📁 docs/                        # Additional documentation
-│   ├── API.md                      # API documentation
-│   ├── DATABASE.md                 # Database guide
-│   ├── TESTING.md                  # Testing strategies
-│   ├── SECURITY.md                 # Security practices
-│   └── ADRs/                       # Architecture Decision Records
-│       ├── 0001-nextjs-framework.md
-│       ├── 0002-fastapi-backend.md
-│       ├── 0003-sqlite-database.md
-│       └── ...
-│
-├── 📄 docker-compose.yml           # Local dev environment
-├── 📄 .gitignore                   # Git ignore rules
-├── 📄 .github/
-│   └── workflows/
-│       ├── ci.yml                  # CI/CD pipeline
-│       └── deploy.yml              # Deployment workflow
-│
-└── 📄 README_STRUCTURE.md          # This file
+└── 📄 docker-compose.yml           # Local dev environment
 ```
 
 ---
@@ -101,45 +56,45 @@ Customizable_Inventory_Management_System/
 
 ### 👨‍💼 Project Manager / Stakeholder
 
-1. Start: [EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md)
-2. Requirements: [SRS.md](../SRS.md)
-3. Progress: [AGILE.md](../AGILE.md) (Sprint section)
-4. Timeline: [AGILE.md](../AGILE.md#-timeline-overview)
+1. Start: [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)
+2. Requirements: [SRS.md](./SRS.md)
+3. Progress: [AGILE.md](./AGILE.md) (Sprint section)
+4. Timeline: [AGILE.md](./AGILE.md#-timeline-overview)
 
 ### 🏗️ Tech Lead / Architect
 
-1. Start: [architecture.md](../architecture.md)
-2. Design Details: [system_design.md](../system_design.md)
-3. Tech Choices: [tech_stack.md](../tech_stack.md)
-4. Team Coordination: [AGILE.md](../AGILE.md#-team-structure--roles)
-5. Standards: [CONTRIBUTING.md](../CONTRIBUTING.md)
+1. Start: [architecture.md](./architecture.md)
+2. Design Details: [system_design.md](./system_design.md)
+3. Tech Choices: [tech_stack.md](./tech_stack.md)
+4. Team Coordination: [AGILE.md](./AGILE.md#-team-structure--roles)
+5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ### 💻 Backend Developer
 
 1. Start: [README.md](../README.md) (Quick Start)
-2. Architecture: [architecture.md](../architecture.md) (Backend section)
-3. API Specs: [system_design.md](../system_design.md) (API section)
-4. Tasks: [AGILE.md](../AGILE.md) (Backend allocation)
-5. Standards: [CONTRIBUTING.md](../CONTRIBUTING.md)
+2. Architecture: [architecture.md](./architecture.md) (Backend section)
+3. API Specs: [system_design.md](./system_design.md) (API section)
+4. Tasks: [AGILE.md](./AGILE.md) (Backend allocation)
+5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
 6. Setup: `backend/.env.example` and `backend/requirements.txt`
 
 ### 🎨 Frontend Developer
 
 1. Start: [README.md](../README.md) (Quick Start)
-2. UI Design: [system_design.md](../system_design.md) (UI/UX section)
-3. Architecture: [architecture.md](../architecture.md) (Frontend section)
-4. Tasks: [AGILE.md](../AGILE.md) (Frontend allocation)
-5. Standards: [CONTRIBUTING.md](../CONTRIBUTING.md)
+2. UI Design: [system_design.md](./system_design.md) (UI/UX section)
+3. Architecture: [architecture.md](./architecture.md) (Frontend section)
+4. Tasks: [AGILE.md](./AGILE.md) (Frontend allocation)
+5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
 6. Setup: `frontend/.env.example`
 
 ### 🧪 QA / Full-Stack Developer
 
 1. Start: [README.md](../README.md)
-2. Requirements: [SRS.md](../SRS.md)
+2. Requirements: [SRS.md](./SRS.md)
 3. Test Strategy: [docs/TESTING.md](./TESTING.md)
-4. Deployment: [DEPLOYMENT.md](../DEPLOYMENT.md)
-5. Tasks: [AGILE.md](../AGILE.md) (QA allocation)
-6. Standards: [CONTRIBUTING.md](../CONTRIBUTING.md)
+4. Deployment: [DEPLOYMENT.md](./DEPLOYMENT.md)
+5. Tasks: [AGILE.md](./AGILE.md) (QA allocation)
+6. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ---
 
@@ -209,13 +164,13 @@ docker-compose up -d
 
 ## ✅ Checklist for New Team Members
 
-- [ ] Read [EXECUTIVE_SUMMARY.md](../EXECUTIVE_SUMMARY.md)
-- [ ] Review [architecture.md](../architecture.md)
+- [ ] Read [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)
+- [ ] Review [architecture.md](./architecture.md)
 - [ ] Read role-specific documentation (see navigation above)
 - [ ] Clone repository and setup environment
 - [ ] Run local development environment
 - [ ] Create first feature branch
-- [ ] Review [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ ] Review [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [ ] Make first code contribution
 - [ ] Submit PR following guidelines
 

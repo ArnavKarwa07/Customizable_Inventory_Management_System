@@ -46,7 +46,7 @@ Frontend (Next.js 14) → REST API (FastAPI) → Database (SQLite)
                                                     └─ Suppliers
 ```
 
-**Detailed documentation**: See [architecture.md](./architecture.md)
+**Detailed documentation**: See [architecture.md](./docs/architecture.md)
 
 ---
 
@@ -72,16 +72,16 @@ Frontend (Next.js 14) → REST API (FastAPI) → Database (SQLite)
 - **ASGI Server**: Uvicorn
 - **Testing**: Pytest with coverage tracking
 
-**Full tech stack details**: See [tech_stack.md](./tech_stack.md)
+**Full tech stack details**: See [tech_stack.md](./docs/tech_stack.md)
 
 ---
 
 ## 📋 Project Documentation
 
-- **[SRS.md](./SRS.md)** - Software Requirements Specification
-- **[tech_stack.md](./tech_stack.md)** - Technology stack rationale and dependencies
-- **[architecture.md](./architecture.md)** - System architecture and design patterns
-- **[system_design.md](./system_design.md)** - Detailed database schema, API specs, UI design system
+- **[SRS.md](./docs/SRS.md)** - Software Requirements Specification
+- **[tech_stack.md](./docs/tech_stack.md)** - Technology stack rationale and dependencies
+- **[architecture.md](./docs/architecture.md)** - System architecture and design patterns
+- **[system_design.md](./docs/system_design.md)** - Detailed database schema, API specs, UI design system
 
 ---
 
@@ -180,11 +180,12 @@ Customizable_Inventory_Management_System/
 │   └── requirements.txt
 │
 ├── docker-compose.yml         # Local development
-├── documentation.md           # Original project docs
-├── tech_stack.md             # Technology rationale
-├── architecture.md           # System architecture
-├── system_design.md          # Detailed design specs
-├── SRS.md                    # Requirements spec
+├── docs/
+│   ├── documentation.md      # Original project docs
+│   ├── tech_stack.md         # Technology rationale
+│   ├── architecture.md       # System architecture
+│   ├── system_design.md      # Detailed design specs
+│   └── SRS.md                # Requirements spec
 └── README.md                 # This file
 ```
 
@@ -523,4 +524,4 @@ Manual refresh: POST /api/v1/auth/refresh-token
 **Next Review**: Sprint Planning  
 **Status**: Active Development
 
-For detailed planning and work allocation, see [AGILE.md](./AGILE.md).
+For detailed planning and work allocation, see [AGILE.md](./docs/AGILE.md).

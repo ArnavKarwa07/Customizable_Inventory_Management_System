@@ -243,7 +243,7 @@ On behalf of the **Technical Team Lead**, I present to you a **complete, product
 
 ### Step 2: Team Kickoff (2 hours)
 
-- All team reviews [README.md](./README.md)
+- All team reviews [README.md](../README.md)
 - Each person reviews their role docs
 - Environment setup from [SPRINT_KICKOFF.md](./SPRINT_KICKOFF.md)
 

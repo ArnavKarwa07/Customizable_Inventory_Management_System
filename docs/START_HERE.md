@@ -15,7 +15,7 @@
    - Checklist of what's ready
    - Success criteria
 
-2. **[README.md](./README.md)** (10 min read)
+2. **[README.md](../README.md)** (10 min read)
    - Project features
    - Quick start instructions
    - Development workflow
@@ -195,7 +195,7 @@ Customizable_Inventory_Management_System/
 ### API Design & Endpoints
 
 - [system_design.md#2-api-endpoint-specifications](./system_design.md#2-api-endpoint-specifications)
-- [README.md#-api-documentation](./README.md#-api-documentation)
+- [README.md#-api-documentation](../README.md#-api-documentation)
 
 ### UI/UX Design System
 
@@ -209,7 +209,7 @@ Customizable_Inventory_Management_System/
 ### Deployment & Operations
 
 - [DEPLOYMENT.md](./DEPLOYMENT.md)
-- [README.md#-deployment](./README.md#-deployment)
+- [README.md#-deployment](../README.md#-deployment)
 
 ### Team & Project Management
 
@@ -218,7 +218,7 @@ Customizable_Inventory_Management_System/
 
 ### Development Setup
 
-- [README.md#-quick-start](./README.md#-quick-start)
+- [README.md#-quick-start](../README.md#-quick-start)
 - [SPRINT_KICKOFF.md](./SPRINT_KICKOFF.md)
 
 ---
@@ -337,7 +337,7 @@ Risk Matrix:           EXECUTIVE_SUMMARY.md#9-risk-management
 
 ### Q: How do I set up the environment?
 
-**A:** [README.md#-quick-start](./README.md#-quick-start) and [SPRINT_KICKOFF.md](./SPRINT_KICKOFF.md)
+**A:** [README.md#-quick-start](../README.md#-quick-start) and [SPRINT_KICKOFF.md](./SPRINT_KICKOFF.md)
 
 ### Q: What's the project timeline?
 
