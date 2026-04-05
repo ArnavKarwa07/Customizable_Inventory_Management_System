@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "Customizable Inventory Management System"
-    app_version: str = "1.0.0"
+    app_version: str = "2.0.0"
     api_v1_prefix: str = "/api/v1"
 
     environment: str = "development"
@@ -18,9 +18,6 @@ class Settings(BaseSettings):
     jwt_refresh_expiration_days: int = 7
 
     cors_origins: str = "http://localhost:3000"
-
-    default_admin_email: str = "admin@example.com"
-    default_admin_password: str = "Admin@123456"
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
 

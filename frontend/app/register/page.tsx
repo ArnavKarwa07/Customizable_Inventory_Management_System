@@ -2,85 +2,143 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-import { AppShell } from "@/components/app-shell";
+import { AuthLayout } from "@/components/auth-layout";
+import { setTokens, setSession } from "@/lib/auth-storage";
 import { apiClient } from "@/lib/api-client";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const payload = {
-      full_name: String(form.get("full_name") ?? ""),
-      email: String(form.get("email") ?? ""),
-      password: String(form.get("password") ?? ""),
+      org_name: String(form.get("org_name") ?? "").trim(),
+      org_slug: String(form.get("org_slug") ?? "").trim().toLowerCase().replace(/\s+/g, "-"),
+      admin_email: String(form.get("email") ?? ""),
+      admin_full_name: String(form.get("full_name") ?? ""),
+      admin_password: String(form.get("password") ?? ""),
     };
 
-    setMessage("");
     setError("");
+    setLoading(true);
 
     try {
-      await apiClient.post("/auth/register", payload);
-      setMessage("Registration successful. Redirecting to login...");
-      setTimeout(() => {
-        router.push("/login");
-      }, 900);
-    } catch {
-      setError("Unable to register with provided details.");
+      const response = await apiClient.post("/auth/org/create", payload);
+      setTokens({
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+      });
+      setSession({
+        orgSlug: payload.org_slug,
+        orgName: payload.org_name,
+        userRole: "owner",
+      });
+      router.push("/dashboard");
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail;
+      setError(typeof detail === "string" ? detail : "Unable to create organization.");
+    } finally {
+      setLoading(false);
     }
   }
 
+  const sectionStyle: React.CSSProperties = {
+    padding: "16px",
+    borderRadius: 8,
+    border: "1px solid var(--border)",
+    background: "var(--surface)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+  };
+
+  const sectionLabelStyle: React.CSSProperties = {
+    fontSize: "0.72rem",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    color: "var(--muted)",
+  };
+
   return (
-    <AppShell>
-      <h1 className="mb-4 text-2xl font-semibold">Create account</h1>
-      <form className="max-w-md space-y-4" onSubmit={handleSubmit}>
-        <label className="block text-sm font-medium" htmlFor="full_name">
-          Full name
-        </label>
-        <input
-          className="w-full rounded-md border border-slate-400 bg-transparent px-3 py-2"
-          id="full_name"
-          name="full_name"
-          type="text"
-          required
-        />
+    <AuthLayout title="Create organization" subtitle="Set up your workspace and admin account">
+      <form style={{ display: "flex", flexDirection: "column", gap: 12 }} onSubmit={handleSubmit}>
+        {/* Organization section */}
+        <div style={sectionStyle}>
+          <p style={sectionLabelStyle}>Organization</p>
+          <div>
+            <label htmlFor="org_name" className="field-label">Organization Name</label>
+            <input className="input" id="org_name" name="org_name" type="text" placeholder="Acme Inc." required />
+          </div>
+          <div>
+            <label htmlFor="org_slug" className="field-label">Slug</label>
+            <input
+              className="input"
+              id="org_slug"
+              name="org_slug"
+              type="text"
+              placeholder="acme-inc"
+              required
+              pattern="^[a-z0-9][a-z0-9\-]{1,78}[a-z0-9]$"
+              title="3-80 chars, lowercase letters, numbers, hyphens only"
+            />
+            <p style={{ fontSize: "0.73rem", color: "var(--muted)", marginTop: 4, margin: "4px 0 0" }}>
+              Used in login. Lowercase, no spaces.
+            </p>
+          </div>
+        </div>
 
-        <label className="block text-sm font-medium" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="w-full rounded-md border border-slate-400 bg-transparent px-3 py-2"
-          id="email"
-          name="email"
-          type="email"
-          required
-        />
+        {/* Admin account section */}
+        <div style={sectionStyle}>
+          <p style={sectionLabelStyle}>Admin Account</p>
+          <div>
+            <label htmlFor="full_name" className="field-label">Full Name</label>
+            <input className="input" id="full_name" name="full_name" type="text" placeholder="John Doe" required />
+          </div>
+          <div>
+            <label htmlFor="email" className="field-label">Email</label>
+            <input className="input" id="email" name="email" type="email" placeholder="admin@acme-inc.com" required />
+          </div>
+          <div>
+            <label htmlFor="password" className="field-label">Password</label>
+            <input className="input" id="password" name="password" type="password" placeholder="••••••••" required minLength={6} />
+          </div>
+        </div>
 
-        <label className="block text-sm font-medium" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="w-full rounded-md border border-slate-400 bg-transparent px-3 py-2"
-          id="password"
-          name="password"
-          type="password"
-          required
-        />
+        {error && (
+          <div style={{
+            padding: "10px 14px",
+            borderRadius: 6,
+            background: "var(--danger-soft)",
+            border: "1px solid #fecaca",
+            color: "var(--danger)",
+            fontSize: "0.85rem",
+          }}>
+            {error}
+          </div>
+        )}
 
         <button
-          className="w-full rounded-md bg-accent px-4 py-2 font-semibold text-white"
+          className="btn btn-primary"
+          disabled={loading}
           type="submit"
+          style={{ padding: "11px", fontSize: "0.9rem" }}
         >
-          Register
+          {loading ? "Creating workspace…" : "Create Organization"}
         </button>
-
-        {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
       </form>
-    </AppShell>
+
+      <p style={{ marginTop: 22, textAlign: "center", fontSize: "0.85rem", color: "var(--muted)" }}>
+        Already have an account?{" "}
+        <Link href="/login" style={{ color: "var(--accent)", fontWeight: 600 }}>
+          Sign in
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

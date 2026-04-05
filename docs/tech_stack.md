@@ -1,412 +1,108 @@
-# Technology Stack - Customizable Inventory Management System
+# Technology Stack — StockPilot IMS v2.0
 
-## Overview
+## Frontend
 
-This document outlines the complete technology stack for the Customizable Inventory Management System, designed for flexibility, scalability, and exceptional user experience.
+| Category       | Technology            | Version   | Purpose                                      |
+|----------------|-----------------------|-----------|----------------------------------------------|
+| Framework      | Next.js               | 14.x      | React meta-framework with App Router         |
+| Language       | TypeScript            | 5.x       | Type safety across all components             |
+| Styling        | Tailwind CSS          | 3.x       | Utility-first CSS with custom design tokens   |
+| HTTP Client    | Axios                 | 1.x       | API calls with auth interceptors              |
+| Typography     | Google Fonts          | —         | Manrope (body) + IBM Plex Mono (code)         |
+| Routing        | Next.js App Router    | —         | File-based routing with middleware protection  |
+| State          | React useState/Effect | —         | Local component state (no global store)       |
+| Auth           | JWT + localStorage    | —         | Token persistence + cookie sync for SSR       |
 
----
+### Frontend Design Decisions
 
-## Frontend Stack
-
-### Framework: Next.js (TypeScript)
-
-- **Version**: 14.x (App Router)
-- **Reasoning**:
-  - Built-in SSR/SSG for fast performance
-  - Excellent for dashboard-heavy applications
-  - API routes for easy backend integration
-  - TypeScript for type safety
-  - File-based routing simplicity
-
-### UI Framework & Styling
-
-- **Component Library**: Shadcn/UI + Tailwind CSS
-- **Icon Library**: Lucide Icons
-- **Charts & Analytics**: Recharts + Tremor
-- **Data Visualization**: Victory Charts for complex analytics
-- **Form Management**: React Hook Form + Zod validation
-- **State Management**: TanStack Query (React Query) + Zustand
-- **Theming**: Next.js theme provider with dark mode support
-
-### Key Libraries
-
-- **HTTP Client**: Axios (centralized API configuration)
-- **Real-time Updates**: Socket.io client
-- **Table Management**: TanStack Table (React Table)
-- **Date Management**: Day.js + React Calendar
-- **PDF Export**: jsPDF + html2canvas
-- **Excel Export**: SheetJS (xlsx)
-- **Notifications**: React Hot Toast
-
-### Development Tools
-
-- **Package Manager**: pnpm
-- **Code Quality**: ESLint + Prettier
-- **Testing**: Jest + React Testing Library
-- **E2E Testing**: Playwright
-- **Build Tool**: Turbopack (via Next.js)
+- **No component library** — Custom CSS with design tokens for full control
+- **No global state manager** — Each page manages its own data lifecycle
+- **Client-side scope checking** — `hasScope()` mirrors backend RBAC for UI gating
+- **Cookie + localStorage dual storage** — Cookies for middleware (SSR), localStorage for client
 
 ---
 
-## Backend Stack
+## Backend
 
-### Framework: FastAPI (Python 3.11+)
+| Category       | Technology            | Version   | Purpose                                      |
+|----------------|-----------------------|-----------|----------------------------------------------|
+| Framework      | FastAPI               | 0.100+    | Async Python web framework with OpenAPI       |
+| Language       | Python                | 3.11+     | Modern type hints and union syntax            |
+| ORM            | SQLAlchemy            | 2.0       | Mapped columns with type annotations          |
+| Database       | SQLite                | 3.x       | Zero-config embedded database                 |
+| Validation     | Pydantic              | 2.x       | Request/response schema validation            |
+| Auth           | PyJWT                 | 2.x       | JWT encode/decode for access + refresh tokens  |
+| Hashing        | bcrypt                | 4.x       | Password hashing (direct, no passlib)          |
+| Config         | pydantic-settings     | 2.x       | `.env` file configuration management           |
+| Server         | Uvicorn               | 0.25+     | ASGI server with hot reload                    |
 
-- **Reasoning**:
-  - Fastest Python web framework
-  - Automatic OpenAPI documentation
-  - Pydantic for data validation
-  - Async/await support natively
-  - Perfect for inventory operations and background tasks
+### Backend Design Decisions
 
-### Async & ASGI
-
-- **Server**: Uvicorn (production-grade ASGI server)
-- **Task Queue**: Celery + Redis (for async operations)
-- **Load Balancing**: Gunicorn with Uvicorn workers
-
-### Database Stack
-
-#### Primary Database: SQLite (Development/Small Scale)
-
-- **Reasoning**:
-  - Suitable for small to medium deployments
-  - Zero-configuration
-  - Perfect for prototyping and MVP
-  - Can scale to production for specific use cases
-
-#### Migration Tool: Alembic
-
-- Database versioning and migrations
-- Reversible migrations for safety
-
-### ORM: SQLAlchemy 2.0
-
-- Async support with `sqlalchemy.ext.asyncio`
-- Type hints and IDE support
-- Complex queries and relationships
-
-### Database Utilities
-
-- **Connection Pool**: SQLAlchemy built-in pooling
-- **Query Optimization**: Query analysis tools
-- **Backup**: Automated SQLite backup scripts
-
-### API Security & Validation
-
-- **Authentication**: JWT (PyJWT) + Refresh tokens
-- **Authorization**: Role-based access control (RBAC)
-- **Validation**: Pydantic v2
-- **Rate Limiting**: SlowAPI (FastAPI rate limiter)
-- **CORS**: FastAPI CORS middleware
-- **Security Headers**: Secure headers middleware
-
-### File Handling & Storage
-
-- **File Upload**: Python-multipart
-- **File Storage**: Local file system with configurable paths
-- **Image Processing**: Pillow (PIL)
-
-### Data Processing & Analytics
-
-- **Data Processing**: Pandas
-- **Aggregations**: SQLAlchemy aggregations
-- **Import/Export**: CSV support via Pandas
-- **Excel Support**: Openpyxl
-
-### Monitoring & Logging
-
-- **Logging**: Python logging + Structlog
-- **Error Tracking**: Custom error handlers with structured logs
-- **Profiling**: Available via FastAPI middleware
-
-### Development Tools
-
-- **Package Manager**: pip + poetry (for dependency management)
-- **Code Quality**: flake8, black, isort
-- **Type Checking**: mypy
-- **Testing**: pytest + pytest-asyncio + pytest-cov
-- **Environment Management**: python-dotenv
-
-### Background Processing
-
-- **Task Scheduling**: APScheduler
-- **Cron Jobs**: For data aggregation, cleanup, backups
-- **Async Operations**: Celery for heavy processing
+- **Direct bcrypt** — Bypasses passlib to avoid bcrypt>=4.1 compatibility issues
+- **No Alembic** — Schema created via `Base.metadata.create_all()` on startup (dev-friendly)
+- **Scope-based RBAC** — Permission map in `deps.py` instead of database-stored permissions
+- **Audit service** — Centralized `log_action()` called from every write endpoint
+- **JWT org_id** — Organization ID embedded in token payload for fast scoping
 
 ---
 
-## Database Design
+## Database
 
-### Database: SQLite 3
-
-- **File-based storage** for portability
-- **ACID compliance** for data integrity
-- **JSON support** for flexible fields (product attributes)
-- **Full-text search** capabilities
-
-### Core Tables
-
-```
-- Users
-- Roles & Permissions
-- Warehouses/Locations
-- Products/Items
-- Stock/Inventory
-- Stock Movements (transactions)
-- Orders
-- Suppliers
-- Audit Logs
-```
-
----
-
-## Infrastructure & Deployment
-
-### Development Environment
-
-- Docker + Docker Compose for local development
-- Separate containers for:
-  - Next.js frontend
-  - FastAPI backend
-  - Redis (optional for dev, required for production)
-  - SQLite (volume mount)
-
-### Testing Environment
-
-- GitHub Actions for CI/CD
-- Automated testing on every push
-- Code quality checks
-
-### Production Recommendations
-
-- **Frontend**: Vercel, Netlify, or AWS S3 + CloudFront
-- **Backend**: AWS EC2, DigitalOcean, Railway, or Render
-- **Database**: Could migrate to PostgreSQL for better scalability
-- **Storage**: S3 for file uploads
-- **CDN**: CloudFront or similar for static assets
-
----
-
-## API Design
-
-### REST API Architecture
-
-- **Base URL**: `/api/v1/`
-- **Response Format**: JSON
-- **Standard HTTP Methods**: GET, POST, PUT, DELETE, PATCH
-- **Status Codes**: RESTful conventions
-- **Error Responses**: Standardized error objects with codes
-
-### API Documentation
-
-- **Auto-generated**: FastAPI/Swagger UI
-- **Endpoint**: `/api/docs` and `/api/redoc`
-- **Interactive Testing**: Built-in Swagger interface
-
-### API Versioning
-
-- URL-based versioning (`/api/v1/`, `/api/v2/`)
-- Backward compatibility maintained
-
----
-
-## Performance Considerations
-
-### Frontend Optimization
-
-- Code splitting and lazy loading
-- Image optimization via Next.js Image component
-- CSS-in-JS efficient styling
-- Service Workers for offline capability
-
-### Backend Optimization
-
-- Database query optimization
-- Async operations where possible
-- Caching strategies (Redis optional)
-- Request/response compression
-
-### Database Optimization
-
-- Proper indexing on frequently queried columns
-- Query batching
-- Connection pooling
-
----
-
-## Development Workflow
-
-### Version Control
-
-- Git + GitHub
-- Feature branch workflow
-- Pull request reviews
-
-### Code Standards
-
-- **Python**: PEP 8 with Black formatter
-- **TypeScript**: ESLint + Prettier
-- **Commit Messages**: Conventional commits
-- **Documentation**: Docstrings + JSDoc
-
-### Testing Standards
-
-- **Backend**: >80% code coverage
-- **Frontend**: Component tests for critical flows
-- **E2E**: Key business workflows
-
-### CI/CD Pipeline
-
-1. Unit tests (both frontend and backend)
-2. Code quality checks
-3. Type checking
-4. Integration tests
-5. Build verification
-6. Manual testing gates
+| Feature              | Implementation                                    |
+|----------------------|---------------------------------------------------|
+| Engine               | SQLite (file-based)                               |
+| ORM                  | SQLAlchemy 2.0 Mapped columns                     |
+| Multi-tenancy        | `org_id` FK on all tenant-scoped tables            |
+| Session management   | Scoped sessions with `SessionLocal()`              |
+| Schema creation      | Auto-DDL via `create_all()` in lifespan handler    |
+| PostgreSQL path      | Change `DATABASE_URL` + install `psycopg2`         |
 
 ---
 
 ## Security Stack
 
-### Backend Security
-
-- Input validation (Pydantic)
-- SQL injection prevention (SQLAlchemy ORM)
-- CORS policy enforcement
-- JWT token-based authentication
-- Rate limiting per IP/user
-- HTTPS enforcement (prod)
-
-### Frontend Security
-
-- CSP Headers (Content Security Policy)
-- XSS prevention (React's built-in escaping)
-- CSRF protection tokens
-- Secure cookie handling
-- HTTPOnly flag on sensitive cookies
-
-### Database Security
-
-- User role-based data access
-- Audit logging of all modifications
-- No sensitive data in queries (parameterized)
-- Encryption for sensitive fields (optional)
+| Feature              | Implementation                                    |
+|----------------------|---------------------------------------------------|
+| Authentication       | JWT (access 24h + refresh 7d, rotation)            |
+| Password hashing     | bcrypt with 72-byte truncation                     |
+| Authorization        | Scope-based RBAC (4 tiers, 30+ scopes)             |
+| Data isolation       | Org-scoped queries on every endpoint                |
+| CORS                 | Configurable origin whitelist                       |
+| Input validation     | Pydantic v2 schemas on all endpoints                |
+| Audit trail          | Every write action logged to `audit_logs` table     |
 
 ---
 
-## Scaling Path
+## Development Tools
 
-### Phase 1: MVP (Current)
-
-- Single FastAPI instance
-- SQLite database
-- Single Next.js deployment
-
-### Phase 2: Early Production
-
-- Docker containerization
-- PostgreSQL migration
-- Redis caching layer
-- Load balancer for backend
-
-### Phase 3: Enterprise Scale
-
-- Kubernetes orchestration
-- Microservices split (if needed)
-- Advanced caching strategies
-- Data warehouse for analytics
-- Message queues (RabbitMQ/Kafka)
+| Tool                 | Purpose                                           |
+|----------------------|---------------------------------------------------|
+| Swagger UI           | Interactive API docs at `/docs`                    |
+| ReDoc                | Alternative API docs at `/redoc`                   |
+| npm run dev          | Frontend dev server with hot reload                |
+| uvicorn --reload     | Backend dev server with auto-reload                |
+| Docker Compose       | Optional containerized development                 |
 
 ---
 
-## Development Dependencies Summary
+## Environment Variables
 
-### Python Backend
+### Backend (`.env`)
 
-```
-fastapi==0.104.1
-uvicorn==0.24.0
-sqlalchemy==2.0.23
-alembic==1.13.0
-pydantic==2.5.0
-python-jwt==1.7.1
-pydantic-settings==2.1.0
-pytest==7.4.3
-black==23.12.0
-```
-
-### Node.js Frontend
-
-```
-next==14.x
-react==18.2.x
-typescript
-tailwindcss
-shadcn/ui
-recharts
-react-hook-form
-zustand
-axios
-```
-
----
-
-## Environment Configuration
-
-### Backend (.env)
-
-```
+```ini
 DATABASE_URL=sqlite:///./inventory.db
-JWT_SECRET_KEY=your-secret-key
+JWT_SECRET_KEY=your-secret-key-here
 JWT_ALGORITHM=HS256
 JWT_EXPIRATION_HOURS=24
+JWT_REFRESH_EXPIRATION_DAYS=7
 CORS_ORIGINS=http://localhost:3000
 ENVIRONMENT=development
+DEBUG=true
+LOG_LEVEL=INFO
 ```
 
-### Frontend (.env.local)
+### Frontend (`.env.local`)
 
-```
+```ini
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_ENVIRONMENT=development
-NEXT_PUBLIC_APP_NAME=Inventory Management System
 ```
-
----
-
-## Summary Table
-
-| Layer      | Technology   | Version  | Purpose                   |
-| ---------- | ------------ | -------- | ------------------------- |
-| Frontend   | Next.js      | 14.x     | Web application framework |
-| Frontend   | TypeScript   | Latest   | Type safety               |
-| Frontend   | Tailwind CSS | Latest   | Styling & design system   |
-| Frontend   | Shadcn/UI    | Latest   | Component library         |
-| Frontend   | Recharts     | Latest   | Data visualization        |
-| Backend    | FastAPI      | Latest   | REST API framework        |
-| Backend    | Python       | 3.11+    | Backend runtime           |
-| Backend    | SQLAlchemy   | 2.0+     | ORM                       |
-| Database   | SQLite       | 3        | Primary database          |
-| Auth       | JWT          | Standard | Authentication            |
-| Testing    | Jest/Pytest  | Latest   | Test framework            |
-| Deployment | Docker       | Latest   | Containerization          |
-
----
-
-## Technology Rationale
-
-✅ **Why This Stack?**
-
-- **Rapid Development**: Next.js + FastAPI enable quick iteration
-- **Excellent DX**: Type safety with TypeScript + Python hints
-- **Cost-Effective**: Open-source, minimal infrastructure requirements for MVP
-- **Scalable**: Clear upgrade path as business grows
-- **Modern Practices**: Async-first, reactive UI, best practices
-- **Community**: Strong communities for all major components
-- **Performance**: Optimized at every layer for inventory operations
-
----
-
-**Last Updated**: March 2026
-**Maintainers**: Development Team

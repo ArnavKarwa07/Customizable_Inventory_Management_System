@@ -53,7 +53,7 @@ def test_register():
     """Test user registration"""
     log_info("Testing registration...")
     email = f"testuser_{int(time.time())}@example.com"
-    payload = {"email": email, "full_name": "Test User", "password": "TestPass@123"}
+    payload = {"email": email, "full_name": "Test User", "password": "TestPass@123", "org_slug": "default"}
 
     try:
         response = requests.post(f"{BASE_URL}/auth/register", json=payload, timeout=TIMEOUT)
@@ -71,7 +71,7 @@ def test_register():
 def test_login(email, password):
     """Test user login"""
     log_info("Testing login...")
-    payload = {"email": email, "password": password}
+    payload = {"email": email, "password": password, "org_slug": "default"}
 
     try:
         response = requests.post(f"{BASE_URL}/auth/login", json=payload, timeout=TIMEOUT)

@@ -32,3 +32,13 @@ class LowStockItem(BaseModel):
     warehouse_id: int
     quantity: int
     threshold: int
+
+
+class StockMovementOut(BaseModel):
+    id: int
+    product_id: int
+    warehouse_id: int
+    change: int
+    reason: str
+    created_by_user_id: int
+    created_at: datetime

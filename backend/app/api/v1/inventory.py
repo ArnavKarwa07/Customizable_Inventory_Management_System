@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_current_user, get_db, require_roles
-from app.database.models import Inventory, Product, StockMovement, User
-from app.schemas.inventory import InventoryOut, LowStockItem, StockAdjustRequest, StockTransferRequest
+from app.core.deps import get_db, require_scope
+from app.database.models import Inventory, Product, StockMovement, User, Warehouse
+from app.schemas.inventory import InventoryOut, LowStockItem, StockAdjustRequest, StockMovementOut, StockTransferRequest
+from app.services.audit_service import log_action
 
 router = APIRouter(prefix="/inventory", tags=["Inventory"])
 
@@ -24,17 +25,26 @@ def _get_or_create_inventory(db: Session, product_id: int, warehouse_id: int) ->
 
 
 @router.get("", response_model=list[InventoryOut])
-def list_inventory(_user: User = Depends(require_roles("admin", "manager", "staff")), db: Session = Depends(get_db)):
-    return db.query(Inventory).all()
+def list_inventory(user: User = Depends(require_scope("inventory:read")), db: Session = Depends(get_db)):
+    rows = (
+        db.query(Inventory)
+        .join(Product, Product.id == Inventory.product_id)
+        .filter(Product.org_id == user.org_id)
+        .all()
+    )
+    return rows
 
 
 @router.post("/adjust", response_model=InventoryOut)
 def adjust_stock(
     payload: StockAdjustRequest,
-    current_user: User = Depends(get_current_user),
+    user: User = Depends(require_scope("inventory:adjust")),
     db: Session = Depends(get_db),
 ):
-    _ = require_roles("admin", "manager", "staff")(current_user)
+    # Verify product belongs to org
+    product = db.query(Product).filter(Product.id == payload.product_id, Product.org_id == user.org_id).first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
     item = _get_or_create_inventory(db, payload.product_id, payload.warehouse_id)
     next_qty = item.quantity + payload.change
@@ -50,9 +60,10 @@ def adjust_stock(
             warehouse_id=payload.warehouse_id,
             change=payload.change,
             reason=payload.reason,
-            created_by_user_id=current_user.id,
+            created_by_user_id=user.id,
         )
     )
+    log_action(db, user, "adjust", "inventory", item.id, f"Adjusted {product.sku} by {payload.change}")
     db.commit()
     db.refresh(item)
     return item
@@ -61,13 +72,16 @@ def adjust_stock(
 @router.post("/transfer", status_code=status.HTTP_200_OK)
 def transfer_stock(
     payload: StockTransferRequest,
-    current_user: User = Depends(get_current_user),
+    user: User = Depends(require_scope("inventory:transfer")),
     db: Session = Depends(get_db),
 ):
-    _ = require_roles("admin", "manager")(current_user)
-
     if payload.quantity <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be greater than zero")
+
+    # Verify product belongs to org
+    product = db.query(Product).filter(Product.id == payload.product_id, Product.org_id == user.org_id).first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
     source = _get_or_create_inventory(db, payload.product_id, payload.from_warehouse_id)
     target = _get_or_create_inventory(db, payload.product_id, payload.to_warehouse_id)
@@ -86,7 +100,7 @@ def transfer_stock(
             warehouse_id=payload.from_warehouse_id,
             change=-payload.quantity,
             reason=f"Transfer to warehouse {payload.to_warehouse_id}",
-            created_by_user_id=current_user.id,
+            created_by_user_id=user.id,
         )
     )
     db.add(
@@ -95,9 +109,10 @@ def transfer_stock(
             warehouse_id=payload.to_warehouse_id,
             change=payload.quantity,
             reason=f"Transfer from warehouse {payload.from_warehouse_id}",
-            created_by_user_id=current_user.id,
+            created_by_user_id=user.id,
         )
     )
+    log_action(db, user, "transfer", "inventory", None, f"Transferred {payload.quantity} of {product.sku}")
     db.commit()
 
     return {
@@ -109,10 +124,11 @@ def transfer_stock(
 
 
 @router.get("/low-stock", response_model=list[LowStockItem])
-def low_stock(_user: User = Depends(require_roles("admin", "manager", "staff")), db: Session = Depends(get_db)):
+def low_stock(user: User = Depends(require_scope("inventory:read")), db: Session = Depends(get_db)):
     rows = (
         db.query(Inventory, Product)
         .join(Product, Product.id == Inventory.product_id)
+        .filter(Product.org_id == user.org_id)
         .filter(Inventory.quantity <= Product.low_stock_threshold)
         .all()
     )
@@ -127,3 +143,20 @@ def low_stock(_user: User = Depends(require_roles("admin", "manager", "staff")),
         )
         for inventory, product in rows
     ]
+
+
+@router.get("/movements", response_model=list[StockMovementOut])
+def list_movements(
+    limit: int = Query(default=50, le=200),
+    user: User = Depends(require_scope("inventory:read")),
+    db: Session = Depends(get_db),
+):
+    rows = (
+        db.query(StockMovement)
+        .join(Product, Product.id == StockMovement.product_id)
+        .filter(Product.org_id == user.org_id)
+        .order_by(StockMovement.id.desc())
+        .limit(limit)
+        .all()
+    )
+    return rows

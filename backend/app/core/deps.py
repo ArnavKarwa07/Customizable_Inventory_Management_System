@@ -39,10 +39,70 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+# ── Role hierarchy: owner(0) < admin(1) < manager(2) < staff(3) ──
+
+ROLE_PERMISSIONS: dict[str, set[str]] = {
+    "owner": {
+        "org:update", "org:delete",
+        "users:create", "users:read", "users:update", "users:delete",
+        "products:create", "products:read", "products:update", "products:delete",
+        "orders:create", "orders:read", "orders:update", "orders:delete",
+        "warehouses:create", "warehouses:read", "warehouses:update", "warehouses:delete",
+        "inventory:read", "inventory:adjust", "inventory:transfer",
+        "suppliers:create", "suppliers:read", "suppliers:update", "suppliers:delete",
+        "categories:create", "categories:read", "categories:update", "categories:delete",
+        "audit:read",
+    },
+    "admin": {
+        "users:create", "users:read", "users:update",
+        "products:create", "products:read", "products:update", "products:delete",
+        "orders:create", "orders:read", "orders:update", "orders:delete",
+        "warehouses:create", "warehouses:read", "warehouses:update", "warehouses:delete",
+        "inventory:read", "inventory:adjust", "inventory:transfer",
+        "suppliers:create", "suppliers:read", "suppliers:update", "suppliers:delete",
+        "categories:create", "categories:read", "categories:update", "categories:delete",
+        "audit:read",
+    },
+    "manager": {
+        "products:create", "products:read", "products:update",
+        "orders:create", "orders:read", "orders:update",
+        "warehouses:create", "warehouses:read", "warehouses:update",
+        "inventory:read", "inventory:adjust", "inventory:transfer",
+        "suppliers:create", "suppliers:read", "suppliers:update",
+        "categories:create", "categories:read", "categories:update",
+    },
+    "staff": {
+        "products:read",
+        "orders:create", "orders:read",
+        "warehouses:read",
+        "inventory:read", "inventory:adjust",
+        "suppliers:read",
+        "categories:read",
+    },
+}
+
+
 def require_roles(*allowed: str):
+    """Legacy role-check dependency — checks role by name."""
     def checker(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role.name not in allowed:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+        return current_user
+
+    return checker
+
+
+def require_scope(*scopes: str):
+    """Fine-grained scope-based permission check."""
+    def checker(current_user: User = Depends(get_current_user)) -> User:
+        role_name = current_user.role.name
+        user_scopes = ROLE_PERMISSIONS.get(role_name, set())
+        for scope in scopes:
+            if scope not in user_scopes:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"Missing permission: {scope}",
+                )
         return current_user
 
     return checker

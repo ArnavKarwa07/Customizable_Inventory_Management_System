@@ -17,9 +17,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Customizable Inventory Management System",
+  title: "StockPilot — Inventory Management System",
   description:
-    "Client-ready inventory operations platform for products, warehouses, orders, and stock alerts.",
+    "Multi-tenant inventory management platform with role-based access, real-time stock tracking, and enterprise-grade audit trails.",
 };
 
 export default function RootLayout({

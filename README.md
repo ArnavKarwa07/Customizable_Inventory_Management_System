@@ -1,52 +1,70 @@
-# Customizable Inventory Management System
+# StockPilot — Customizable Inventory Management System
 
-A comprehensive, modern, and professional inventory management solution built with **Next.js** (frontend), **FastAPI** (backend), and **SQLite** (database). Designed for retail businesses, warehouses, e-commerce platforms, and manufacturing facilities with a focus on beautiful UI/UX and scalability.
+A production-ready, **multi-tenant** inventory management platform built with **Next.js 14** (frontend), **FastAPI** (backend), and **SQLite** (database). Features organization-based data isolation, a four-tier role-based access control system, full CRUD operations for every resource, and a premium glassmorphism UI.
+
+> **v2.0** — Multi-Tenancy & RBAC Upgrade (April 2026)
+
+---
 
 ## 🌟 Features
 
-### Core Functionality
+### Multi-Tenancy
 
-- ✅ **User Authentication & Authorization** - Secure JWT-based auth with role-based access control
-- ✅ **Product Management** - Complete product catalog with SKUs, barcodes, and custom attributes
-- ✅ **Multi-Warehouse Inventory Tracking** - Real-time stock levels across multiple warehouses
-- ✅ **Stock Movements** - Complete audit trail of all inventory transactions
-- ✅ **Order Management** - Purchase and sales order workflows with status tracking
-- ✅ **Supplier Management** - Supplier directory and order history
-- ✅ **Dashboard & Analytics** - KPI tracking, charts, and custom reports
-- ✅ **Audit Logging** - Complete action audit trail for compliance
-- ✅ **Export Functionality** - CSV/PDF exports for reports and data
+- 🏢 **Organization Workspaces** — Create isolated organizations with unique slugs
+- 🔒 **Data Isolation** — All queries scoped to the user's `org_id`
+- 📨 **User Invitations** — Owners/admins invite users with preset roles and temporary passwords
+- 🔑 **Org-Scoped Login** — Users sign in with org slug + email + password
 
-### UI/UX Excellence
+### Role-Based Access Control (RBAC)
 
-- 🎨 Beautiful, professional design system with Tailwind CSS
-- 📱 Fully responsive (mobile, tablet, desktop)
-- 🌓 Dark/Light theme support
-- ♿ WCAG 2.1 Level AA accessibility compliance
-- ⚡ Fast performance with optimized components
+| Capability           | Owner | Admin | Manager | Staff |
+|----------------------|:-----:|:-----:|:-------:|:-----:|
+| Org Settings         |  ✅   |       |         |       |
+| Manage Users         |  ✅   |  ✅   |         |       |
+| Delete Resources     |  ✅   |  ✅   |         |       |
+| Create/Edit Resources|  ✅   |  ✅   |   ✅    |       |
+| Create Orders        |  ✅   |  ✅   |   ✅    |  ✅   |
+| View Data            |  ✅   |  ✅   |   ✅    |  ✅   |
+| Adjust Stock         |  ✅   |  ✅   |   ✅    |  ✅   |
+| Transfer Stock       |  ✅   |  ✅   |   ✅    |       |
+| View Audit Log       |  ✅   |  ✅   |         |       |
 
-### Developer Experience
+### Inventory Operations
 
-- 🔒 Type-safe: TypeScript + Python type hints
-- 📚 Auto-generated API documentation (Swagger)
-- 🧪 Comprehensive testing (Jest, Pytest, Playwright)
-- 🚀 Async/await support throughout
-- 📦 Docker support for local development
+- 📦 **Products** — Full CRUD with SKU, category, supplier, and low-stock thresholds
+- 📂 **Categories** — Organize products into categories
+- 🤝 **Suppliers** — Manage supplier directory with contact details
+- 🏭 **Warehouses** — Multiple warehouse support with activation/deactivation
+- 🏷️ **Stock Tracking** — Real-time inventory grid across all warehouses
+- 🔄 **Stock Adjustments** — Increase/decrease stock with reason tracking
+- 🚚 **Stock Transfers** — Transfer between warehouses with full movement history
+- 🛒 **Orders** — Create, track status (draft → pending → completed), and delete draft orders
+- ⚠️ **Low Stock Alerts** — Automatic detection based on configurable thresholds
+
+### Enterprise Features
+
+- 📋 **Audit Trail** — Every action logged with user, timestamp, and details
+- 📊 **Dashboard** — Stat cards, low-stock alerts, and recent activity feed
+- 👥 **Team Management** — Invite users, assign/change roles, deactivate accounts
+- 🌙 **Dark/Light Mode** — Premium glassmorphism design with gradient mesh backgrounds
+- 🔐 **JWT Auth** — Access + refresh token rotation with org_id in token payload
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Frontend (Next.js 14) → REST API (FastAPI) → Database (SQLite)
-    │                        │                      │
-    ├─ React Components       ├─ Service Layer      ├─ User Management
-    ├─ State Management       ├─ Business Logic     ├─ Products
-    ├─ API Client             ├─ Validation         ├─ Inventory
-    └─ Authentication         └─ Authorization      ├─ Orders
-                                                    └─ Suppliers
+Frontend (Next.js 14)  →  REST API (FastAPI)  →  Database (SQLite)
+     │                         │                        │
+     ├─ App Router             ├─ Scope-Based RBAC      ├─ Organizations
+     ├─ Glassmorphism UI       ├─ Org-Scoped Queries    ├─ Users + Roles
+     ├─ Axios + Interceptors   ├─ Audit Logging         ├─ Products
+     ├─ Auth Storage           ├─ JWT Tokens            ├─ Inventory
+     └─ Client-Side Scopes    └─ Pydantic Validation    ├─ Orders
+                                                        ├─ Suppliers
+                                                        ├─ Categories
+                                                        └─ Audit Logs
 ```
-
-**Detailed documentation**: See [architecture.md](./docs/architecture.md)
 
 ---
 
@@ -54,34 +72,25 @@ Frontend (Next.js 14) → REST API (FastAPI) → Database (SQLite)
 
 ### Frontend
 
-- **Framework**: Next.js 14 (App Router, TypeScript)
-- **Styling**: Tailwind CSS + Shadcn/UI components
-- **State**: Zustand (client state) + React Query (server state)
-- **Forms**: React Hook Form + Zod validation
-- **Charts**: Recharts for data visualization
-- **HTTP**: Axios with interceptors
-- **Testing**: Jest, React Testing Library, Playwright
+| Technology         | Purpose                                    |
+|--------------------|--------------------------------------------|
+| Next.js 14         | React framework (App Router, TypeScript)   |
+| Tailwind CSS       | Utility-first CSS framework                |
+| Manrope + IBM Plex | Premium typography via Google Fonts         |
+| Axios              | HTTP client with token interceptors        |
+| CSS Custom Props   | Design token system (glassmorphism, themes)|
 
 ### Backend
 
-- **Framework**: FastAPI (Python 3.11+)
-- **ORM**: SQLAlchemy 2.0 with async support
-- **Database**: SQLite (with PostgreSQL migration path)
-- **Auth**: JWT tokens with refresh rotation
-- **Validation**: Pydantic v2
-- **ASGI Server**: Uvicorn
-- **Testing**: Pytest with coverage tracking
-
-**Full tech stack details**: See [tech_stack.md](./docs/tech_stack.md)
-
----
-
-## 📋 Project Documentation
-
-- **[SRS.md](./docs/SRS.md)** - Software Requirements Specification
-- **[tech_stack.md](./docs/tech_stack.md)** - Technology stack rationale and dependencies
-- **[architecture.md](./docs/architecture.md)** - System architecture and design patterns
-- **[system_design.md](./docs/system_design.md)** - Detailed database schema, API specs, UI design system
+| Technology         | Purpose                                    |
+|--------------------|--------------------------------------------|
+| FastAPI            | Async Python web framework                 |
+| SQLAlchemy 2.0     | ORM with type-annotated models             |
+| SQLite             | Embedded database (PostgreSQL-ready)       |
+| PyJWT              | JWT access + refresh token management      |
+| bcrypt             | Password hashing                           |
+| Pydantic v2        | Request/response validation                |
+| Uvicorn            | ASGI server                                |
 
 ---
 
@@ -89,69 +98,51 @@ Frontend (Next.js 14) → REST API (FastAPI) → Database (SQLite)
 
 ### Prerequisites
 
-- Node.js 18+
-- Python 3.11+
-- Git
+- **Node.js** 18+
+- **Python** 3.11+
+- **Git**
 
-### Development Setup
-
-#### Option 1: Using Docker Compose (Recommended)
-
-```bash
-# Clone the repository
-git clone <repo-url>
-cd Customizable_Inventory_Management_System
-
-# Start all services
-docker-compose up -d
-
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
-```
-
-#### Option 2: Manual Setup
-
-**Backend Setup**
+### Backend Setup
 
 ```bash
 cd backend
 
 # Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup database
-alembic upgrade head
-
-# Run development server
-uvicorn app.main:app --reload --port 8000
+# Start server (auto-creates DB + seeds roles)
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-**Frontend Setup**
+### Frontend Setup
 
 ```bash
 cd frontend
 
 # Install dependencies
-pnpm install
+npm install
 
-# Create .env.local
-cp .env.example .env.local
-
-# Run development server
-pnpm dev
+# Start dev server
+npm run dev
 
 # Open http://localhost:3000
 ```
 
-### Default Credentials (Development)
+### First-Time Setup
 
-- **Email**: admin@example.com
-- **Password**: Admin@123456
+1. Open `http://localhost:3000`
+2. Click **Create Organization**
+3. Fill in organization name, slug, and owner credentials
+4. You're in! Start adding products, warehouses, and placing orders
+
+> **No default credentials** — You create your org and owner account on first run.
 
 ---
 
@@ -159,369 +150,172 @@ pnpm dev
 
 ```
 Customizable_Inventory_Management_System/
-├── frontend/                    # Next.js application
-│   ├── app/                    # Pages and layouts
-│   ├── components/             # React components
-│   ├── lib/                    # Utilities and hooks
-│   ├── store/                  # Zustand stores
-│   ├── styles/                 # Styling
-│   └── public/                 # Static assets
+├── frontend/                     # Next.js 14 application
+│   ├── app/                     # Pages (App Router)
+│   │   ├── dashboard/           # Dashboard with stats
+│   │   ├── products/            # Product CRUD
+│   │   ├── orders/              # Order management
+│   │   ├── inventory/           # Stock grid, adjust, transfer
+│   │   ├── warehouses/          # Warehouse management
+│   │   ├── suppliers/           # Supplier directory
+│   │   ├── categories/          # Category management
+│   │   ├── settings/            # Org settings + user management
+│   │   ├── audit/               # Audit trail viewer
+│   │   ├── profile/             # User profile
+│   │   ├── login/               # Org-scoped login
+│   │   └── register/            # Create organization
+│   ├── components/              # Shared UI components
+│   │   └── app-shell.tsx        # Layout with sidebar + header
+│   ├── lib/                     # Utilities
+│   │   ├── api-client.ts        # Axios with auth interceptors
+│   │   └── auth-storage.ts      # Token + session management
+│   └── middleware.ts            # Route protection
 │
-├── backend/                     # FastAPI application
+├── backend/                      # FastAPI application
 │   ├── app/
-│   │   ├── api/               # API routes
-│   │   ├── database/          # Database and models
-│   │   ├── services/          # Business logic
-│   │   ├── core/              # Auth and security
-│   │   ├── schemas/           # Pydantic DTOs
-│   │   └── main.py            # App entry point
-│   ├── migrations/            # Alembic DB migrations
-│   ├── tests/                 # Test suite
+│   │   ├── api/v1/              # API route modules
+│   │   │   ├── auth.py          # Org create, login, invite
+│   │   │   ├── products.py      # Product CRUD
+│   │   │   ├── orders.py        # Order CRUD + status
+│   │   │   ├── inventory.py     # Stock adjust, transfer, movements
+│   │   │   ├── warehouses.py    # Warehouse CRUD
+│   │   │   ├── suppliers.py     # Supplier CRUD
+│   │   │   ├── categories.py    # Category CRUD
+│   │   │   ├── organizations.py # Org info + update
+│   │   │   ├── users.py         # User management
+│   │   │   └── audit.py         # Audit log viewer
+│   │   ├── database/
+│   │   │   ├── models.py        # SQLAlchemy models
+│   │   │   ├── base.py          # Declarative base
+│   │   │   └── session.py       # DB engine + session
+│   │   ├── schemas/             # Pydantic DTOs
+│   │   ├── core/
+│   │   │   ├── config.py        # Environment settings
+│   │   │   ├── security.py      # Password hashing + JWT
+│   │   │   └── deps.py          # Auth + RBAC dependencies
+│   │   ├── services/
+│   │   │   ├── bootstrap.py     # Role seeding
+│   │   │   └── audit_service.py # Audit logging utility
+│   │   └── main.py              # FastAPI app factory
 │   └── requirements.txt
 │
-├── docker-compose.yml         # Local development
-├── docs/
-│   ├── documentation.md      # Original project docs
-│   ├── tech_stack.md         # Technology rationale
-│   ├── architecture.md       # System architecture
-│   ├── system_design.md      # Detailed design specs
-│   └── SRS.md                # Requirements spec
-└── README.md                 # This file
+├── docs/                         # Project documentation
+└── README.md                     # This file
 ```
 
 ---
 
-## 🔄 Development Workflow
+## 📊 API Reference
 
-### Git Workflow
+Once the backend is running: **Swagger UI** at `http://localhost:8000/docs`
 
-```
-main (production)
-  ↑
-  ├─ develop (staging)
-  │   ├─ feature/auth-improvements
-  │   ├─ feature/inventory-sync
-  │   ├─ bugfix/search-filtering
-  │   └─ ...
-```
+### Authentication
 
-### Branch Naming
+| Method | Endpoint                   | Description                      | Auth  |
+|--------|----------------------------|----------------------------------|-------|
+| POST   | `/api/v1/auth/org/create`  | Create org + owner account       | —     |
+| POST   | `/api/v1/auth/login`       | Login (org_slug + email + pass)  | —     |
+| POST   | `/api/v1/auth/register`    | Self-register as staff           | —     |
+| POST   | `/api/v1/auth/invite`      | Invite user with role            | ✅    |
+| POST   | `/api/v1/auth/refresh`     | Refresh tokens                   | —     |
+| POST   | `/api/v1/auth/logout`      | Revoke refresh token             | ✅    |
 
-- `feature/description` - New features
-- `bugfix/description` - Bug fixes
-- `hotfix/description` - Production hotfixes
-- `docs/description` - Documentation updates
+### Resources (all org-scoped, auth required)
 
-### Commit Standards
+| Resource     | List          | Create        | Update             | Delete             |
+|--------------|---------------|---------------|--------------------|--------------------|
+| Products     | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
+| Orders       | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
+| Warehouses   | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
+| Suppliers    | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
+| Categories   | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
+| Users        | `GET`         | `POST`        | `PATCH /{id}`      | `DELETE /{id}`     |
 
-```
-[type]: Description
+### Inventory
 
-Types: feat, fix, docs, style, refactor, test, chore
-Example: feat: Add stock transfer between warehouses
-```
+| Method | Endpoint                        | Description              |
+|--------|---------------------------------|--------------------------|
+| GET    | `/api/v1/inventory`             | List all stock levels    |
+| POST   | `/api/v1/inventory/adjust`      | Adjust stock (+/-)       |
+| POST   | `/api/v1/inventory/transfer`    | Transfer between warehouses |
+| GET    | `/api/v1/inventory/low-stock`   | Low stock alerts         |
+| GET    | `/api/v1/inventory/movements`   | Stock movement history   |
 
-### Pull Request Process
+### Other
 
-1. Create PR from feature branch to main/develop
-2. Address code review comments
-3. All tests must pass
-4. Minimum 1 approval required
-5. Merge and deploy
-
----
-
-## 🧪 Testing
-
-### Frontend Tests
-
-```bash
-cd frontend
-
-# Run all tests
-pnpm test
-
-# With coverage
-pnpm test:coverage
-
-# E2E tests
-pnpm e2e
-
-# Watch mode
-pnpm test --watch
-```
-
-### Backend Tests
-
-```bash
-cd backend
-
-# Run all tests
-pytest
-
-# With coverage
-pytest --cov=app
-
-# Specific test file
-pytest tests/test_auth.py
-
-# Watch mode
-pytest-watch
-```
-
-### Test Coverage Goals
-
-- Backend: >85% code coverage
-- Frontend: >80% component coverage
-- E2E: All critical user workflows
+| Method | Endpoint            | Description          |
+|--------|---------------------|----------------------|
+| GET    | `/api/v1/users/me`  | Current user profile |
+| GET    | `/api/v1/org`       | Org details          |
+| PATCH  | `/api/v1/org`       | Update org name      |
+| GET    | `/api/v1/audit`     | Audit log            |
 
 ---
 
-## 📊 API Documentation
+## 🔐 Security
 
-Once the backend is running, access the interactive API documentation:
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-Key endpoints:
-
-```
-Authentication:
-  POST   /api/v1/auth/register
-  POST   /api/v1/auth/login
-  POST   /api/v1/auth/refresh-token
-
-Inventory:
-  GET    /api/v1/inventory
-  PUT    /api/v1/inventory/{id}
-  POST   /api/v1/inventory/adjust-stock
-  POST   /api/v1/inventory/transfer
-
-Products:
-  GET    /api/v1/products
-  POST   /api/v1/products
-  PUT    /api/v1/products/{id}
-
-Orders:
-  GET    /api/v1/orders
-  POST   /api/v1/orders
-  GET    /api/v1/orders/{id}
-
-Reports:
-  GET    /api/v1/reports/dashboard
-  GET    /api/v1/reports/inventory-status
-
-See system_design.md for complete API specification
-```
-
----
-
-## 🔐 Security Features
-
-- ✅ JWT authentication with refresh tokens
-- ✅ Role-based access control (RBAC)
-- ✅ Password hashing (Bcrypt)
-- ✅ SQL injection prevention (ORM)
+- ✅ JWT access + refresh token rotation
+- ✅ Scope-based RBAC with permission matrix
+- ✅ Password hashing (bcrypt, 72-byte safe)
+- ✅ Org-scoped data isolation (every query filters by `org_id`)
+- ✅ Role hierarchy enforcement (can't assign higher role)
+- ✅ SQL injection prevention (SQLAlchemy ORM)
 - ✅ XSS protection (React escaping)
-- ✅ CORS validation
-- ✅ Rate limiting
-- ✅ Complete audit logging
-- ✅ HTTPS enforced (production)
+- ✅ CORS whitelisting
+- ✅ Complete audit trail
 
 ---
 
-## 📈 Performance Targets
+## 🎨 Design System
 
-| Metric         | Target          |
-| -------------- | --------------- |
-| Page Load Time | < 3 seconds     |
-| API Response   | < 500ms (95th%) |
-| Authentication | < 300ms         |
-| Database Query | < 50ms          |
-| TTFB           | < 1 second      |
-| LCP            | < 2.5 seconds   |
+The frontend uses a custom design token system with CSS custom properties:
 
----
-
-## 🚢 Deployment
-
-### Production Deployment Options
-
-#### Vercel (Frontend)
-
-```bash
-# Push to GitHub
-git push origin main
-
-# Vercel auto-deploys on push
-# Configure environment variables in Vercel dashboard
-NEXT_PUBLIC_API_URL=https://api.yourdomain.com
-```
-
-#### Railway/Render/DigitalOcean (Backend)
-
-```bash
-# Backend deployment with environment variables
-DATABASE_URL=postgresql://...
-JWT_SECRET_KEY=your-secret-key
-CORS_ORIGINS=https://yourdomain.com
-```
-
-#### Database Migration (SQLite → PostgreSQL)
-
-See [migration guide](./docs/MIGRATION.md) for PostgreSQL setup.
-
----
-
-## 🤝 Team Collaboration & Agile Process
-
-### Sprint Structure
-
-- **Sprint Length**: 2 weeks
-- **Sprint Planning**: Monday 10 AM
-- **Daily Standup**: 15 minutes (Wed/Fri)
-- **Sprint Review**: Friday 4 PM
-- **Sprint Retro**: Friday 5 PM
-
-### Roles & Responsibilities
-
-**Team Lead / Architect**
-
-- Architecture decisions
-- Code review oversight
-- Cross-domain integration
-
-**Frontend Developer**
-
-- UI/UX implementation
-- Component development
-- E2E testing
-
-**Backend Developer**
-
-- API development
-- Database schema
-- Business logic
-
-**QA/Tester**
-
-- Test planning
-- Manual testing
-- Performance testing
-
-### Agile Practices
-
-- Kanban board for task tracking (GitHub Projects)
-- User story format for requirements
-- Acceptance criteria for each task
-- Burn-down tracking
-- Retrospective insights
+- **Glassmorphism** — Frosted glass panels with backdrop blur
+- **Gradient Mesh** — Multi-point radial gradient backgrounds
+- **Stat Cards** — Color-coded gradient cards for KPIs
+- **Badge System** — Role badges (owner/admin/manager/staff) and status badges
+- **Micro-animations** — Rise-in, fade, and pulse-glow effects
+- **Dark Mode** — Full dark theme with separate token set
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Common Issues
-
-**CORS Errors**
-
-```
-Solution: Update CORS_ORIGINS in backend .env
-CORS_ORIGINS=http://localhost:3000,http://localhost:8080
-```
-
-**Database Connection Failed**
-
-```
-Solution: Ensure SQLite file path is correct and writable
-Check: DATABASE_URL in backend .env
-```
-
-**Port Already in Use**
-
-```
-Solution: Kill process or use different port
-lsof -i :3000  # Frontend
-lsof -i :8000  # Backend
-```
-
-**Token Expired**
-
-```
-Solution: Refresh token automatically handled in interceptors
-Manual refresh: POST /api/v1/auth/refresh-token
-```
-
----
-
-## 📞 Support & Contributing
-
-### Getting Help
-
-1. Check documentation in `/docs`
-2. Search existing GitHub issues
-3. Create new issue with details
-4. Contact team lead
-
-### Contributing Guidelines
-
-1. Fork the repository
-2. Create feature branch
-3. Make changes with clear commits
-4. Write/update tests
-5. Submit pull request
-6. Address reviews
-7. Merge and close
-
----
-
-## 📝 License
-
-[Your License Here]
+| Issue | Solution |
+|-------|----------|
+| CORS errors | Update `CORS_ORIGINS` in backend `.env` |
+| DB not created | Server auto-creates `inventory.db` on first run |
+| Login fails  | Ensure you provide the org slug, not just email |
+| 403 Forbidden | Your role lacks the required scope for this action |
+| bcrypt error | Handled automatically — passwords truncated to 72 bytes |
 
 ---
 
 ## 🎯 Roadmap
 
-### Phase 1 (MVP) - Q1 2026
+### ✅ v2.0 (Current) — Multi-Tenancy & RBAC
 
-- [x] Core auth system
-- [x] Product management
-- [x] Inventory tracking
-- [x] Basic orders
-- [x] Dashboard
+- [x] Organization-based multi-tenancy
+- [x] 4-tier RBAC (owner, admin, manager, staff)
+- [x] Full CRUD for all resources
+- [x] Supplier & Category management
+- [x] Stock adjustments & transfers
+- [x] Audit trail
+- [x] Premium UI overhaul
 
-### Phase 2 - Q2 2026
-
-- [ ] Advanced reporting
-- [ ] Email notifications
-- [ ] Cycle counting
-- [ ] Supplier portal
-- [ ] Mobile app (PWA)
-
-### Phase 3 - Q3 2026
+### 🔮 v3.0 (Planned)
 
 - [ ] PostgreSQL migration
-- [ ] Microservices split
-- [ ] Real-time WebSocket sync
-- [ ] AI-powered forecasting
-- [ ] Advanced analytics
+- [ ] Email notifications & alerts
+- [ ] Barcode/QR scanning
+- [ ] Advanced reporting & analytics
+- [ ] CSV/PDF data exports
+- [ ] PWA mobile support
 
 ---
 
-## 📊 Status: Ready for Development
+**Last Updated**: April 2026
+**Version**: 2.0.0
+**Status**: Production-Ready
 
-**Documentation**: ✅ Complete  
-**Architecture**: ✅ Approved  
-**API Specs**: ✅ Defined  
-**Design System**: ✅ Ready  
-**Testing Plan**: ✅ Created
-
----
-
-**Last Updated**: March 2026  
-**Next Review**: Sprint Planning  
-**Status**: Active Development
-
-For detailed planning and work allocation, see [AGILE.md](./docs/AGILE.md).
+For detailed documentation, see the [docs/](./docs/) directory.

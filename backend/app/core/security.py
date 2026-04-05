@@ -2,20 +2,22 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
 
+import bcrypt as _bcrypt
 import jwt
-from passlib.context import CryptContext
 
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return _bcrypt.checkpw(
+        plain_password.encode("utf-8")[:72],
+        hashed_password.encode("utf-8"),
+    )
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    hashed = _bcrypt.hashpw(password.encode("utf-8")[:72], _bcrypt.gensalt())
+    return hashed.decode("utf-8")
 
 
 def _encode_token(payload: dict[str, Any]) -> str:
@@ -25,29 +27,33 @@ def _encode_token(payload: dict[str, Any]) -> str:
     return token
 
 
-def create_access_token(subject: str) -> str:
+def create_access_token(subject: str, org_id: int | None = None) -> str:
     now = datetime.now(timezone.utc)
     expire = now + timedelta(hours=settings.jwt_expiration_hours)
-    payload = {
+    payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
         "iat": now,
         "type": "access",
         "jti": str(uuid4()),
     }
+    if org_id is not None:
+        payload["org_id"] = org_id
     return _encode_token(payload)
 
 
-def create_refresh_token(subject: str) -> str:
+def create_refresh_token(subject: str, org_id: int | None = None) -> str:
     now = datetime.now(timezone.utc)
     expire = now + timedelta(days=settings.jwt_refresh_expiration_days)
-    payload = {
+    payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
         "iat": now,
         "type": "refresh",
         "jti": str(uuid4()),
     }
+    if org_id is not None:
+        payload["org_id"] = org_id
     return _encode_token(payload)
 
 

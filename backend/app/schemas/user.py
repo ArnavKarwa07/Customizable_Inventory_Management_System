@@ -28,3 +28,5 @@ class UserOut(BaseModel):
 
 class UserWithRole(UserOut):
     role_name: str
+    org_id: int
+    org_name: str

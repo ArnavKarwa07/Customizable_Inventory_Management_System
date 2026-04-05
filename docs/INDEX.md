@@ -1,209 +1,52 @@
-# Project Index & Navigation
+# Documentation Index — StockPilot IMS v2.0
 
-## 📚 Documentation Structure
-
-### Getting Started
-
-1. **[README.md](../README.md)** - Overview, quick start, features
-2. **[EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)** - Project overview for leads
-3. **[AGILE.md](./AGILE.md)** - Sprint planning & team workflow
-
-### Architecture & Design
-
-4. **[architecture.md](./architecture.md)** - System architecture, data flow
-5. **[system_design.md](./system_design.md)** - Database schema, API specs, UI design
-6. **[tech_stack.md](./tech_stack.md)** - Technology choices & rationale
-
-### Requirements & Specifications
-
-7. **[SRS.md](./SRS.md)** - Complete requirements specification
-8. **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development standards & code guidelines
-
-### Operations & Deployment
-
-9. **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploy to staging/production
-10. **[INDEX.md](./INDEX.md)** - This file
+All project documentation for the StockPilot Inventory Management System.
 
 ---
 
-## 🗂️ Directory Structure
+## 📚 Documents
 
-```
-Customizable_Inventory_Management_System/
-│
-├── 📄 README.md                    # Main project overview
-├── 📄 start.bat                    # Local startup helper (Windows)
-├── 📁 docs/                        # Project documentation
-│   ├── INDEX.md
-│   ├── START_HERE.md
-│   ├── PROJECT_DELIVERY_SUMMARY.md
-│   ├── EXECUTIVE_SUMMARY.md
-│   ├── AGILE.md
-│   ├── SRS.md
-│   ├── architecture.md
-│   ├── system_design.md
-│   ├── tech_stack.md
-│   ├── CONTRIBUTING.md
-│   └── DEPLOYMENT.md
-├── 📁 frontend/                    # Next.js application
-├── 📁 backend/                     # FastAPI application
-└── 📄 docker-compose.yml           # Local dev environment
-```
+### Core Documentation
 
----
+| Document | Description |
+|----------|-------------|
+| [README.md](../README.md) | Project overview, quick start, API reference |
+| [SRS.md](./SRS.md) | Software Requirements Specification — all functional and non-functional requirements |
+| [architecture.md](./architecture.md) | System architecture — multi-tenancy, RBAC, audit, frontend/backend layers |
+| [system_design.md](./system_design.md) | Detailed database schemas, API endpoint specs, RBAC matrix, UI design tokens |
+| [tech_stack.md](./tech_stack.md) | Technology choices, rationale, and environment variables |
 
-## 🎯 Quick Navigation by Role
+### Process Documentation
 
-### 👨‍💼 Project Manager / Stakeholder
+| Document | Description |
+|----------|-------------|
+| [AGILE.md](./AGILE.md) | Agile process, sprint structure, team roles |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment guides for production environments |
 
-1. Start: [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)
-2. Requirements: [SRS.md](./SRS.md)
-3. Progress: [AGILE.md](./AGILE.md) (Sprint section)
-4. Timeline: [AGILE.md](./AGILE.md#-timeline-overview)
+### Summary Documents
 
-### 🏗️ Tech Lead / Architect
-
-1. Start: [architecture.md](./architecture.md)
-2. Design Details: [system_design.md](./system_design.md)
-3. Tech Choices: [tech_stack.md](./tech_stack.md)
-4. Team Coordination: [AGILE.md](./AGILE.md#-team-structure--roles)
-5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
-
-### 💻 Backend Developer
-
-1. Start: [README.md](../README.md) (Quick Start)
-2. Architecture: [architecture.md](./architecture.md) (Backend section)
-3. API Specs: [system_design.md](./system_design.md) (API section)
-4. Tasks: [AGILE.md](./AGILE.md) (Backend allocation)
-5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
-6. Setup: `backend/.env.example` and `backend/requirements.txt`
-
-### 🎨 Frontend Developer
-
-1. Start: [README.md](../README.md) (Quick Start)
-2. UI Design: [system_design.md](./system_design.md) (UI/UX section)
-3. Architecture: [architecture.md](./architecture.md) (Frontend section)
-4. Tasks: [AGILE.md](./AGILE.md) (Frontend allocation)
-5. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
-6. Setup: `frontend/.env.example`
-
-### 🧪 QA / Full-Stack Developer
-
-1. Start: [README.md](../README.md)
-2. Requirements: [SRS.md](./SRS.md)
-3. Test Strategy: [docs/TESTING.md](./TESTING.md)
-4. Deployment: [DEPLOYMENT.md](./DEPLOYMENT.md)
-5. Tasks: [AGILE.md](./AGILE.md) (QA allocation)
-6. Standards: [CONTRIBUTING.md](./CONTRIBUTING.md)
+| Document | Description |
+|----------|-------------|
+| [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md) | High-level project summary for stakeholders |
+| [PROJECT_DELIVERY_SUMMARY.md](./PROJECT_DELIVERY_SUMMARY.md) | Delivery status and completion tracking |
+| [PRODUCT_READY.md](./PRODUCT_READY.md) | Production readiness checklist |
+| [START_HERE.md](./START_HERE.md) | Getting started guide for new developers |
 
 ---
 
-## 📋 Key Decisions Made
+## 🔑 Key Concepts
 
-See [docs/ADRs/](./ADRs/) for Architecture Decision Records (ADRs):
+### Multi-Tenancy
+Every piece of data belongs to an **Organization**. Users log in with their org slug. Queries are always filtered by `org_id`.
 
-- ADR-0001: Why Next.js for Frontend
-- ADR-0002: Why FastAPI for Backend
-- ADR-0003: Why SQLite for MVP
+### RBAC Hierarchy
+`owner` → `admin` → `manager` → `staff`
 
----
+Each role has a defined set of **scopes** (e.g., `products:delete`, `inventory:transfer`). Higher roles inherit all lower permissions.
 
-## 🔄 Development Workflow
-
-```
-1. Review Documentation
-   ↓
-2. Check Current Tasks (AGILE.md)
-   ↓
-3. Create Branch (CONTRIBUTING.md)
-   ↓
-4. Develop & Test (Standards in CONTRIBUTING.md)
-   ↓
-5. Submit PR (Follow PR template)
-   ↓
-6. Code Review (CONTRIBUTING.md#5-pull-request-process)
-   ↓
-7. Merge & Deploy (DEPLOYMENT.md)
-```
+### Audit Trail
+Every create, update, and delete action is logged to `audit_logs` with user ID, action type, resource, and timestamp.
 
 ---
 
-## 📞 Quick Reference
-
-### Setup Commands
-
-```bash
-# Backend
-cd backend && python -m venv venv && venv/Scripts/activate
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload
-
-# Frontend
-cd frontend && pnpm install && pnpm dev
-
-# Docker (Recommended)
-docker-compose up -d
-```
-
-### Important URLs
-
-- Frontend: http://localhost:3000
-- Backend: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-- GitHub: [ArnavKarwa07/Customizable_Inventory_Management_System](https://github.com/ArnavKarwa07/Customizable_Inventory_Management_System)
-
-### Key Contacts
-
-- Tech Lead: [TBD]
-- Backend Lead: [TBD]
-- Frontend Lead: [TBD]
-- QA Lead: [TBD]
-
----
-
-## ✅ Checklist for New Team Members
-
-- [ ] Read [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md)
-- [ ] Review [architecture.md](./architecture.md)
-- [ ] Read role-specific documentation (see navigation above)
-- [ ] Clone repository and setup environment
-- [ ] Run local development environment
-- [ ] Create first feature branch
-- [ ] Review [CONTRIBUTING.md](./CONTRIBUTING.md)
-- [ ] Make first code contribution
-- [ ] Submit PR following guidelines
-
----
-
-## 🔗 External Resources
-
-### Next.js
-
-- [Next.js 14 Documentation](https://nextjs.org/docs)
-- [React Documentation](https://react.dev)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-
-### FastAPI
-
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
-- [Pydantic Documentation](https://docs.pydantic.dev/)
-
-### Tools
-
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Shadcn/UI](https://ui.shadcn.com/)
-- [Git Documentation](https://git-scm.com/doc)
-
----
-
-## 📝 Document Updates
-
-Last Updated: March 27, 2026
-Version: 1.0
-Maintainer: Development Team
-
----
-
-**Ready to contribute?** Start with your role's documentation above! 🚀
+**Version**: 2.0.0 | **Updated**: April 2026

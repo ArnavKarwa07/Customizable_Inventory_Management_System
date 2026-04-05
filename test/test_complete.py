@@ -56,7 +56,7 @@ def test_health_check():
 def test_admin_login():
     """Test admin login"""
     log_info("Testing admin login...")
-    payload = {"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}
+    payload = {"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD, "org_slug": "default"}
 
     try:
         response = requests.post(f"{BASE_URL}/auth/login", json=payload, timeout=TIMEOUT)
@@ -77,7 +77,7 @@ def test_register():
     """Test user registration"""
     log_info("Testing registration...")
     email = f"testuser_{int(time.time())}@example.com"
-    payload = {"email": email, "full_name": "Test User", "password": "TestPass@123"}
+    payload = {"email": email, "full_name": "Test User", "password": "TestPass@123", "org_slug": "default"}
 
     try:
         response = requests.post(f"{BASE_URL}/auth/register", json=payload, timeout=TIMEOUT)
@@ -95,7 +95,7 @@ def test_register():
 def test_login(email, password):
     """Test user login"""
     log_info(f"Testing login for {email}...")
-    payload = {"email": email, "password": password}
+    payload = {"email": email, "password": password, "org_slug": "default"}
 
     try:
         response = requests.post(f"{BASE_URL}/auth/login", json=payload, timeout=TIMEOUT)
