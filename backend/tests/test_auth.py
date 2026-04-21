@@ -2,6 +2,7 @@ def test_register_and_login_and_refresh(client):
     register_response = client.post(
         "/api/v1/auth/register",
         json={
+            "org_slug": "default",
             "email": "staff1@example.com",
             "full_name": "Staff One",
             "password": "Secret123!",
@@ -11,7 +12,7 @@ def test_register_and_login_and_refresh(client):
 
     login_response = client.post(
         "/api/v1/auth/login",
-        json={"email": "staff1@example.com", "password": "Secret123!"},
+        json={"org_slug": "default", "email": "staff1@example.com", "password": "Secret123!"},
     )
     assert login_response.status_code == 200
     tokens = login_response.json()
@@ -30,6 +31,6 @@ def test_register_and_login_and_refresh(client):
 def test_login_fails_with_wrong_password(client):
     response = client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@example.com", "password": "wrong-password"},
+        json={"org_slug": "default", "email": "admin@example.com", "password": "wrong-password"},
     )
     assert response.status_code == 401

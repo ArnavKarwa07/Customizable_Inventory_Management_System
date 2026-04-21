@@ -6,8 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.core.security import hash_password
 from app.core.deps import get_db
 from app.database.base import Base
+from app.database.models import Organization, Role, User
 from app.main import create_app
 from app.services.bootstrap import seed_defaults
 
@@ -24,6 +26,24 @@ def db_session() -> Generator[Session, None, None]:
 
     db = TestingSessionLocal()
     seed_defaults(db)
+
+    default_org = Organization(name="Default", slug="default")
+    db.add(default_org)
+    db.flush()
+
+    owner_role = db.query(Role).filter(Role.name == "owner").first()
+    db.add(
+        User(
+            email="admin@example.com",
+            full_name="Admin User",
+            password_hash=hash_password("Admin@123456"),
+            role_id=owner_role.id,
+            org_id=default_org.id,
+            is_active=True,
+        )
+    )
+    db.commit()
+
     try:
         yield db
     finally:

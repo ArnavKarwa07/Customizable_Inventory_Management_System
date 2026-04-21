@@ -1,5 +1,5 @@
 def _login(client, email: str, password: str) -> str:
-    response = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    response = client.post("/api/v1/auth/login", json={"org_slug": "default", "email": email, "password": password})
     assert response.status_code == 200
     return response.json()["access_token"]
 
@@ -21,6 +21,7 @@ def test_staff_cannot_list_users(client):
     register = client.post(
         "/api/v1/auth/register",
         json={
+            "org_slug": "default",
             "email": "staff2@example.com",
             "full_name": "Staff Two",
             "password": "Secret123!",

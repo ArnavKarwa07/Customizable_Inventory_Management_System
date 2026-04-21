@@ -1,7 +1,7 @@
 def _admin_headers(client):
     login = client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@example.com", "password": "Admin@123456"},
+        json={"org_slug": "default", "email": "admin@example.com", "password": "Admin@123456"},
     )
     assert login.status_code == 200
     token = login.json()["access_token"]
